@@ -122,7 +122,7 @@ fun HomeScreen() {
                 // Section Header
                 item {
                     Text(
-                        text = "Today's Reminders",
+                        text = "Today's Reminder",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         ),
