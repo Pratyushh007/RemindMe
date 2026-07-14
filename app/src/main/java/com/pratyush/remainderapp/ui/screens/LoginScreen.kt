@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,44 +55,20 @@ fun LoginScreen(
         showFooter = true
     }
 
-    // Subtle background animation
-    val infiniteTransition = rememberInfiniteTransition(label = "login_bg")
-    val bgOffset by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(8000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "bg_shift"
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        PurplePrimary.copy(alpha = 0.08f + bgOffset * 0.04f),
+                        PurpleLight.copy(alpha = 0.15f),
                         OffWhite,
                         White,
                     )
                 )
             )
     ) {
-        // Subtle decorative circles in background
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawCircle(
-                color = PurpleLight.copy(alpha = 0.3f),
-                radius = 200f,
-                center = Offset(size.width * 0.9f, size.height * 0.1f)
-            )
-            drawCircle(
-                color = PurpleLight.copy(alpha = 0.15f),
-                radius = 150f,
-                center = Offset(size.width * 0.1f, size.height * 0.85f)
-            )
-        }
+        AnimatedWaveBackground()
 
         Column(
             modifier = Modifier
@@ -320,5 +297,99 @@ fun LoginScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun AnimatedWaveBackground(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition(label = "wave_transition")
+    
+    // Animate phase offset for Wave 1 (slow, moving right)
+    val phase1 by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2 * Math.PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 6000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "phase1"
+    )
+
+    // Animate phase offset for Wave 2 (faster, moving left)
+    val phase2 by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2 * Math.PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 4000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "phase2"
+    )
+
+    Canvas(modifier = modifier.fillMaxSize()) {
+        val width = size.width
+        val height = size.height
+        
+        // Configuration
+        val baseLine1 = height * 0.70f // Base height for Back wave
+        val baseLine2 = height * 0.73f // Base height for Front wave
+        
+        val amplitude1 = 35.dp.toPx()
+        val amplitude2 = 25.dp.toPx()
+        
+        val wavelength1 = width * 1.3f
+        val wavelength2 = width * 0.9f
+
+        // Draw Wave 1 (Purple Base)
+        val path1 = Path().apply {
+            moveTo(0f, height)
+            lineTo(0f, baseLine1)
+            for (x in 0..width.toInt() step 4) {
+                val angle = (x / wavelength1) * (2 * Math.PI) + phase1
+                val y = baseLine1 + amplitude1 * kotlin.math.sin(angle).toFloat()
+                lineTo(x.toFloat(), y)
+            }
+            lineTo(width, height)
+            close()
+        }
+        
+        drawPath(
+            path = path1,
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    PurplePrimary.copy(alpha = 0.35f),
+                    PurpleSecondary.copy(alpha = 0.5f),
+                    PurpleDark.copy(alpha = 0.7f)
+                ),
+                startY = baseLine1 - amplitude1,
+                endY = height
+            )
+        )
+
+        // Draw Wave 2 (White & Purple Mix)
+        val path2 = Path().apply {
+            moveTo(0f, height)
+            lineTo(0f, baseLine2)
+            for (x in 0..width.toInt() step 4) {
+                val angle = (x / wavelength2) * (2 * Math.PI) - phase2
+                val y = baseLine2 + amplitude2 * kotlin.math.sin(angle).toFloat()
+                lineTo(x.toFloat(), y)
+            }
+            lineTo(width, height)
+            close()
+        }
+        
+        drawPath(
+            path = path2,
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    White.copy(alpha = 0.85f),
+                    PurpleLight.copy(alpha = 0.6f),
+                    PurplePrimary.copy(alpha = 0.85f)
+                ),
+                startY = baseLine2 - amplitude2,
+                endY = height
+            )
+        )
     }
 }

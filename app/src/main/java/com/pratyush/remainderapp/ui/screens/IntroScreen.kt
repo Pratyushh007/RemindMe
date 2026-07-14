@@ -57,15 +57,6 @@ fun IntroScreen(
         label = "float"
     )
 
-    // Rotating glow
-    val glowRotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(6000, easing = LinearEasing)
-        ),
-        label = "glow_rotation"
-    )
 
     // Pulsing scale for rings
     val pulseScale by infiniteTransition.animateFloat(
@@ -162,47 +153,30 @@ fun IntroScreen(
 
                 // Floating orbs
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.06f),
-                    radius = 120f,
+                    color = PurpleDark.copy(alpha = 0.35f),
+                    radius = 60f,
                     center = Offset(w * 0.15f, h * particle1Y)
                 )
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.04f),
-                    radius = 80f,
+                    color = PurpleDark.copy(alpha = 0.3f),
+                    radius = 40f,
                     center = Offset(w * 0.8f, h * particle2Y)
                 )
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.05f),
-                    radius = 60f,
+                    color = PurpleDark.copy(alpha = 0.35f),
+                    radius = 30f,
                     center = Offset(w * 0.5f, h * particle3Y)
                 )
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.03f),
-                    radius = 150f,
+                    color = PurpleDark.copy(alpha = 0.25f),
+                    radius = 75f,
                     center = Offset(w * 0.7f, h * 0.3f)
                 )
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.04f),
-                    radius = 100f,
+                    color = PurpleDark.copy(alpha = 0.3f),
+                    radius = 50f,
                     center = Offset(w * 0.2f, h * 0.7f)
                 )
-
-                // Rotating gradient ring
-                rotate(glowRotation, pivot = Offset(w / 2, h / 2)) {
-                    drawCircle(
-                        brush = Brush.sweepGradient(
-                            colors = listOf(
-                                Color.White.copy(alpha = 0.08f),
-                                Color.Transparent,
-                                Color.White.copy(alpha = 0.05f),
-                                Color.Transparent,
-                                Color.White.copy(alpha = 0.08f),
-                            )
-                        ),
-                        radius = 250f * pulseScale,
-                        center = Offset(w / 2, h / 2)
-                    )
-                }
             }
         }
 
